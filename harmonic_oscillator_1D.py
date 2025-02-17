@@ -42,7 +42,7 @@ def calculate_position(x1_old, x2_old, dt, v1_halfstep, v2_halfstep):
 
 def save_xyz(filename, x1_list, x2_list):
     """
-    Saves the trajectory of two particles in .xyz format.
+    Saves the trajectory of two particles in .xyz format.##
     
     Parameters:
     filename (str): Name of the output file.
