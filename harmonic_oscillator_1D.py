@@ -40,7 +40,21 @@ def calculate_position(x1_old, x2_old, dt, v1_halfstep, v2_halfstep):
     x2_new = x2_old + v2_halfstep * dt
     return x1_new, x2_new
 
-
+def save_xyz(filename, x1_list, x2_list):
+    """
+    Saves the trajectory of two particles in .xyz format.
+    
+    Parameters:
+    filename (str): Name of the output file.
+    x1_list (list): List of x-coordinates for particle 1.
+    x2_list (list): List of x-coordinates for particle 2.
+    """
+    with open(filename, "w") as f:
+        for i in range(len(x1_list)):
+            f.write("2\n")  # Number of particles
+            f.write(f"Timestep {i}\n")  # Comment line
+            f.write(f"P1 {x1_list[i]:.6f} 0.000000 0.000000\n")  # Particle 1
+            f.write(f"P2 {x2_list[i]:.6f} 0.000000 0.000000\n")  # Particle 
 # _________________________________store data_____________________________________________
 # create lists for data storing
 x1_list, x2_list = [x1], [x2]
@@ -107,3 +121,5 @@ plt.legend()
 plt.xlim(0, timesteps)
 plt.tight_layout()
 plt.savefig("momentum_plot.png")
+
+save_xyz("trajectory.xyz", x1_list, x2_list)
