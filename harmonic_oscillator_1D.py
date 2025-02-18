@@ -12,10 +12,8 @@ analysis_time   = 50     # total simulation time
 timesteps       = 1000    # nr of timesteps
 dt              = analysis_time/timesteps  # timestep length
 
-# random velocities in the interval (-1:1), should velocities be equal to each other? 
-v1 = np.random.uniform(-1, 1)  
-v2 = -v1
-print("Initial velocity of the particles = " + f"{v1:.3f}.")
+# random velocities in the interval (-1:1)
+v1, v2 = np.random.uniform(-1, 1)  
 
 
 # ______________________________functions________________________________________________
