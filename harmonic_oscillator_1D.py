@@ -62,7 +62,7 @@ def leapfrog(timesteps, dt, mass, spring_constant, x_equilibrium, x1, x2, v1, v2
     # Leap-frog algorithm
     force = calculate_force(x1, x2, spring_constant, x_equilibrium)
     for step in range(timesteps):
-        # Update velocities and positions
+        # Update velocities and coordinates
         v1_halfstep, v2_halfstep = calculate_velocity(v1, v2, dt, force, mass)
         x1, x2 = calculate_position(x1, x2, dt, v1_halfstep, v2_halfstep)
         force = calculate_force(x1, x2, spring_constant, x_equilibrium)
