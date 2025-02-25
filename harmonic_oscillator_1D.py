@@ -22,8 +22,11 @@ def calculate_position(x1_old, x2_old, dt, v1_halfstep, v2_halfstep):
     return x1_new, x2_new
 
 def analytical_solution(t, x1_0, x2_0, v1_0, v2_0, mass, spring_constant, x0=0.0):
-    """Compute the analytical solution for the harmonic oscillator using x(t) = A cos(ωt + φ)."""
-    omega = np.sqrt(spring_constant / mass)  # Angular frequency
+    """Compute the analytical solution for two identical masses connected by a spring."""
+    # Reduced mass for two equal masses
+    reduced_m = mass / 2  
+    # Angular frequency using the reduced mass
+    omega = np.sqrt(spring_constant / reduced_m)
 
     # Relative motion initial conditions
     x_rel_0 = x1_0 - x2_0 - x0  # Initial relative displacement
@@ -35,14 +38,12 @@ def analytical_solution(t, x1_0, x2_0, v1_0, v2_0, mass, spring_constant, x0=0.0
 
     # Compute relative motion
     x_rel_t = A * np.cos(omega * t + phi)
-
-    # Center of mass motion
+    # Center of mass motion (since both masses are equal, it simplifies)
     x_cm_t = (x1_0 + x2_0) / 2 + (v1_0 + v2_0) * t / 2
-
-    # Particle positions
+    
+    # Compute individual positions
     x1_analytical = x_cm_t + (x_rel_t + x0) / 2
     x2_analytical = x_cm_t - (x_rel_t + x0) / 2
-
     return x1_analytical, x2_analytical
 
 def calculate_rmsd(x1_sim, x2_sim, x1_analytical, x2_analytical):
@@ -55,7 +56,7 @@ def leapfrog(timesteps, dt, mass, spring_constant, x_equilibrium, x1, x2, v1, v2
     # Data storage
     x1_list, x2_list = [x1], [x2]
     v1_list, v2_list = [v1], [v2]
-    x1_analytic_list, x2_analytic_list = [], []
+    x1_analytic_list, x2_analytic_list = [x1], [x2]
     momentum_list = [calculate_momentum(mass, v1, v2)]
     rmsd_list = []
 
@@ -92,11 +93,11 @@ def plot_results(timesteps, x1_list, x2_list, momentum_list, rmsd_list, x1_analy
     # Position plot
     plt.figure(figsize=(10, 4))
     # leap-frog results
-    plt.plot(range(timesteps + 1), x1_list, label="Leap-frog: Particle 1", color='#1f77b4', lw=1)
-    plt.plot(range(timesteps + 1), x2_list, label="Leap-frog: Particle 2", color='#ff7f0e', lw=1)
+    plt.plot(range(timesteps + 1), x1_list, label="Leap-frog: Particle 1", color='lightcoral', lw=1)
+    plt.plot(range(timesteps + 1), x2_list, label="Leap-frog: Particle 2", color='aqua', lw=1)
     # analytical results
-    plt.plot(range(1, timesteps + 1), x1_analytic_list, label="Analytical: Particle 1", color='#1f77b4', lw=1, linestyle='dotted')
-    plt.plot(range(1, timesteps + 1), x2_analytic_list, label="Analytical: Particle 2", color='#ff7f0e', lw=1, linestyle='dotted')
+    plt.plot(range(timesteps + 1), x1_analytic_list, label="Analytical: Particle 1", color='darkred', lw=1, linestyle='dashed')
+    plt.plot(range(timesteps + 1), x2_analytic_list, label="Analytical: Particle 2", color='midnightblue', lw=1, linestyle='dashed')
 
     plt.xlabel("Timestep")
     plt.ylabel("Position")
@@ -147,8 +148,8 @@ def save_xyz(filename, x1_list, x2_list):
 
 if __name__ == "__main__":
     # _____________________________variables________________________________________________
-    analysis_time = 50       # Total simulation time
-    timesteps = 100000         # Number of timesteps
+    analysis_time = 30       # Total simulation time
+    timesteps = 100       # Number of timesteps
     mass = 1                 # Particle mass
     spring_constant = 1      # Spring constant
     x_equilibrium = 1        # Equilibrium position
