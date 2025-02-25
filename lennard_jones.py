@@ -78,7 +78,7 @@ def save_xyz(positions, step, filename="lj_trajectory.xyz"):
         for pos in positions:
             f.write(f"X {pos[0]} {pos[1]} 0.0\n")  # Xi x y z
 
-# Main simulation loop
+# Main simulation loop performing time integration
 def simulate(N=20, density=1.0, dt=0.001, steps=1000):
     """Run the simulation."""
     # Initialize particles
