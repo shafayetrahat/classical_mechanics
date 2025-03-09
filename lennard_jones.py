@@ -160,7 +160,7 @@ def simulate(N=20, density=0.8, dt=0.001, steps=5000, use_pbc=True, desired_temp
     print(f"Trajectory saved to {filename}")
     return total_energies, time_steps
 
-# Run the simulation with and without PBCs
+# Run the simulation with and without PBC
 if __name__ == "__main__":
     print("Simulating without PBCs...")
     total_energies_no_pbc, time_steps_no_pbc = simulate(N=20, dt=0.0005, steps=5000, use_pbc=False, filename="lj_trajectory_no_pbc.xyz")
