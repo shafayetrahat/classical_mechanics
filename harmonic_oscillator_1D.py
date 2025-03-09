@@ -206,8 +206,3 @@ if __name__ == "__main__":
     plt.grid(True)
     plt.savefig("time_vs_timestep.png")
     # plt.show()
-
-    # Determine optimal timestep
-    # threshold = 0.1  # RMSD threshold for acceptable accuracy
-    # optimal_dt = dt_values[np.argmax(np.array(rmsd_values) < threshold)]
-    print(f"Optimal timestep: {rmsd_values}")
