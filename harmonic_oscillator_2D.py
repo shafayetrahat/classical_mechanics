@@ -25,20 +25,12 @@ def calculate_ang_momentum(mass, x1, x2, y1, y2, v1_x, v2_x, v1_y, v2_y):
     return mass * (x1 * v1_y - y1 * v1_x + x2 * v2_y - y2 * v2_x)
 
 def calculate_kinetic_energy(mass, v1_x, v2_x, v1_y, v2_y):
-    """Compute kinetic energy using center-of-mass and relative motion."""
-    # Compute center-of-mass velocity
-    v_cm_x = (v1_x + v2_x) / 2
-    v_cm_y = (v1_y + v2_y) / 2
-
-    # Compute relative velocity
-    v_rel_x = v2_x - v1_x
-    v_rel_y = v2_y - v1_y
-
-    # Compute kinetic energy
-    ke_cm = mass * (v_cm_x**2 + v_cm_y**2)  # Center-of-mass kinetic energy
-    ke_rel = 0.5 * (mass / 2) * (v_rel_x**2 + v_rel_y**2)  # Relative kinetic energy
-
-    return ke_rel + ke_cm
+    """Compute the total kinetic energy of the system."""
+    # Compute the kinetic energy of each particle
+    ke1 = 0.5 * mass * (v1_x**2 + v1_y**2)
+    ke2 = 0.5 * mass * (v2_x**2 + v2_y**2)
+    # Total kinetic energy
+    return ke1 + ke2
 
 def calculate_potential_energy(spring_constant, x1, x2, y1, y2, C):
     """Calculate the potential energy of the spring system."""
@@ -182,7 +174,7 @@ if __name__ == "__main__":
     timesteps = 1000         # Number of timesteps
     mass = 1                 # Particle mass
     spring_constant = 1      # Spring constant
-    C = 1                    # Equilibrium position
+    C = 0                    # Equilibrium position
 
     # Derived parameters
     dt = analysis_time / timesteps
