@@ -1,10 +1,31 @@
 import numpy as np
 import matplotlib.pyplot as plt
+import argparse
+import sys
 from mpmath import mp
-
-# Set the desired precision (e.g., 50 decimal places)
+# Set precision to 50 decimal places
 mp.dps = 50
 
+def parse_arguments():
+    """Read in and validate the user input from the command line"""
+    parser = argparse.ArgumentParser(
+        description="Leap-frog simulation of two partiles harmonically oscillating in 2D.",
+        usage="python %(prog)s <simulation_time> <time_step (dt)>")
+    parser.add_argument("--time", type=float, required=True, help="Total simulation time (must be > 0)")
+    parser.add_argument("--dt", type=float, required=True, help="Time step length (must be > 0")
+    args = parser.parse_args()
+
+    # Validation of the input
+    if args.time <= 0:
+        print("Error: Simulation time must be greater than 0.")
+        sys.exit(1)
+    elif args.dt <= 0:
+        print("Error: Time step (dt) must be greater than 0.")
+        sys.exit(1)
+    elif args.dt > args.time:
+        print("Error: Time step is larger than the simulation time.")
+        sys.exit(1)
+    return mp.mpf(args.time), args.dt
 
 def calculate_force(x1, x2, y1, y2, spring_constant, C):
     """Calculate the force acting between the two particles due to the spring."""
@@ -64,7 +85,7 @@ def leapfrog(timesteps, dt, mass, spring_constant, C, x1, x2, y1, y2, v1_x, v2_x
 
     # Leap-frog algorithm
     force_x, force_y = calculate_force(x1, x2, y1, y2, spring_constant, C)
-    for step in range(timesteps):
+    for step in range(int(timesteps)):
         # Leap-frog algorithm: force and location at full timesteps and velocity at half time steps
         v1_x, v2_x, v1_y, v2_y = calculate_velocity(v1_x, v2_x, v1_y, v2_y, dt, force_x, force_y, mass)
         v1_x_halftsep, v2_x_halftsep, v1_y_halftsep, v2_y_halftsep = v1_x, v2_x, v1_y, v2_y  # store half-step data for momentum calc
@@ -87,7 +108,7 @@ def leapfrog(timesteps, dt, mass, spring_constant, C, x1, x2, y1, y2, v1_x, v2_x
 
 def plot_results(timesteps, x1_list, x2_list, y1_list, y2_list, lin_momentum_list, ang_momentum_list, total_energy_list, kin_energy_list, pot_energy_list):
     """Plot the results: particle trajectories, linear and angular momentum conservation."""
-    
+    timesteps = int(timesteps)
     # Position plot
     plt.figure(figsize=(8, 8))
     # leap-frog results
@@ -106,39 +127,42 @@ def plot_results(timesteps, x1_list, x2_list, y1_list, y2_list, lin_momentum_lis
     # Linear momentum conservation plot
     plt.figure(figsize=(8, 4))
     lin_momentum_array = np.array(lin_momentum_list)
-    plt.plot(range(timesteps), lin_momentum_array[:, 0], label="Momentum X", color="red")
-    plt.plot(range(timesteps), lin_momentum_array[:, 1], label="Momentum Y", color="blue")
-    plt.xlabel("Timestep")
+    time = np.linspace(0, float(dt) * timesteps, timesteps)
+    plt.plot(time, lin_momentum_array[:, 0], label="Momentum X", color="red")
+    plt.plot(time, lin_momentum_array[:, 1], label="Momentum Y", color="blue")
+    plt.xlabel("Time")
     plt.ylabel("Momentum")
     plt.title("Linear momentum conservation")
     plt.legend()
     plt.grid()
-    plt.xlim(0, timesteps)
+    plt.xlim(0, max(time))
     plt.savefig("lin_momentum_2D.png")
 
     # Angular momentum plot
     ang_momentum_array = np.array(ang_momentum_list)
+    time = np.linspace(0, float(dt) * timesteps, timesteps)
     plt.figure(figsize=(8, 6))
-    plt.plot(range(timesteps), ang_momentum_array, label="Angular momentum", color="red")
-    plt.xlabel("Timestep")
+    plt.plot(time, ang_momentum_array, label="Angular momentum", color="red")
+    plt.xlabel("Time")
     plt.ylabel("Angular Momentum")
     plt.title("Angular Momentum Conservation")
     plt.grid(True)
     plt.legend()
-    plt.xlim(0, timesteps)
+    plt.xlim(0, max(time))
     plt.tight_layout()
     plt.savefig("ang_momentum_2D.png")
 
     # Total energy conservation plot
     plt.figure(figsize=(8, 4))
     total_energy_array = np.array(total_energy_list)
-    plt.plot(range(timesteps), total_energy_array, label="Total energy", color="red")
-    plt.xlabel("Timestep")
+    time = np.linspace(0, float(dt) * timesteps, timesteps)
+    plt.plot(time, total_energy_array, label="Total energy", color="red")
+    plt.xlabel("Time")
     plt.ylabel("Total energy")
     plt.title("Total energy conservation")
     plt.legend()
     plt.grid()
-    plt.xlim(0, timesteps)
+    plt.xlim(0, max(time))
     plt.savefig("total_energy_2D.png")
 
     # Kinetic and potential energy
@@ -175,31 +199,32 @@ def save_xyz(filename, x1_list, x2_list, y1_list, y2_list):
 
 if __name__ == "__main__":
     # _____________________________variables________________________________________________
-    analysis_time = mp.mpf(10)       # Total simulation time
-    timesteps = 10000         # Number of timesteps
+    # Read in the user's input: total simulation time and time step length (Δt)
+    analysis_time, dt = parse_arguments()
+   
+    # Fixed variables, not asked from the user   
     mass = mp.mpf(1)                 # Particle mass
     spring_constant = mp.mpf(1)      # Spring constant
-    C = mp.mpf(0.5)              # Equilibrium position
+    C = mp.mpf(0.5)                  # Equilibrium position
+    x1, x2, y1, y2 = mp.mpf(0), mp.mpf(1), mp.mpf(0), mp.mpf(0)  # Initial positions
 
     # Derived parameters
-    dt = analysis_time / timesteps
-    x1, x2, y1, y2 = mp.mpf(-1), mp.mpf(1), mp.mpf(0), mp.mpf(0)  # Initial positions
-    # v1_x, v2_x, v1_y, v2_y = np.random.uniform(-1, 1, 4)  
-    random_velocities = np.random.uniform(-1, 1, 4)
-    v1_x, v2_x, v1_y, v2_y = [mp.mpf(v) for v in random_velocities]
-
+    timesteps = analysis_time / dt
+    random_velocities = np.random.uniform(-1, 1, 4) # Generate random initial velocities
+    v1_x, v1_y, v2_x, v2_y = [mp.mpf(v) for v in random_velocities]
 
     print(f"Initial velocities of particles: v1_x = {str(v1_x)[:6]}, "
         f"v1_y = {str(v1_y)[:6]}, "
         f"v2_x = {str(v2_x)[:6]}, "
         f"v2_y = {str(v2_y)[:6]}")
     
-    
     # Run simulation
-    x1_list, x2_list, y1_list, y2_list, lin_momentum_list, ang_momentum_list, total_energy_list, kin_energy_list, pot_energy_list = leapfrog(
+    x1_list, x2_list, y1_list, y2_list, lin_momentum_list, ang_momentum_list, \
+    total_energy_list, kin_energy_list, pot_energy_list = leapfrog(
         timesteps, dt, mass, spring_constant, C, 
         x1, x2, y1, y2, 
-        v1_x, v2_x, v1_y, v2_y)
+        v1_x, v2_x, v1_y, v2_y
+    )
     
     # For linear momentum
     print(f"Initial linear momentum: px_init = {mp.nstr(lin_momentum_list[0][0], n=3)}, py_init = {mp.nstr(lin_momentum_list[0][1], n=3)}")
