@@ -1,5 +1,29 @@
 import numpy as np
 import matplotlib.pyplot as plt
+import argparse
+import sys
+import time  # for timing the simulation
+
+def parse_arguments():
+    """Read in and validate the user input from the command line"""
+    parser = argparse.ArgumentParser(
+        description="Leap-frog simulation of two partiles harmonically oscillating.",
+        usage="python %(prog)s <simulation_time> <time_step (dt)>")
+    parser.add_argument("--time", type=float, required=True, help="Total simulation time (must be > 0)")
+    parser.add_argument("--dt", type=float, required=True, help="Time step length (must be > 0")
+    args = parser.parse_args()
+
+    # Validation of the input
+    if args.time <= 0:
+        print("Error: Simulation time must be greater than 0.")
+        sys.exit(1)
+    elif args.dt <= 0:
+        print("Error: Time step (dt) must be greater than 0.")
+        sys.exit(1)
+    elif args.dt > args.time:
+        print("Error: Time step is larger than the simulation time.")
+        sys.exit(1)
+    return args.time, args.dt
 
 def calculate_force(x1, x2, spring_constant, x_equilibrium):
     """Calculate the force acting between the two particles due to the spring."""
@@ -93,8 +117,8 @@ def plot_results(timesteps, x1_list, x2_list, momentum_list, rmsd_list, x1_analy
     # Position plot
     plt.figure(figsize=(10, 4))
     # leap-frog results
-    plt.plot(np.arange(timesteps + 1) * dt, x1_list, label="Leap-frog: Particle 1", color='lightcoral', lw=1)
-    plt.plot(np.arange(timesteps + 1) * dt, x2_list, label="Leap-frog: Particle 2", color='aqua', lw=1)
+    plt.plot(np.arange(timesteps + 1) * dt, x1_list, label="Leap-frog: Particle 1", color='lightcoral', lw=3)
+    plt.plot(np.arange(timesteps + 1) * dt, x2_list, label="Leap-frog: Particle 2", color='aqua', lw=3)
     # analytical results
     plt.plot(np.arange(timesteps + 1) * dt, x1_analytic_list, label="Analytical: Particle 1", color='darkred', lw=1, linestyle='dashed')
     plt.plot(np.arange(timesteps + 1) * dt, x2_analytic_list, label="Analytical: Particle 2", color='midnightblue', lw=1, linestyle='dashed')
@@ -104,9 +128,9 @@ def plot_results(timesteps, x1_list, x2_list, momentum_list, rmsd_list, x1_analy
     plt.title(f"Particle Positions (dt = {dt})")
     plt.legend(loc='upper right')
     plt.xlim(0, timesteps * dt)
-    plt.grid(True, linestyle='--', linewidth=0.5)
+    plt.grid(True, linewidth=0.5)
     plt.tight_layout()
-    plt.savefig(f"position_plot_dt_{dt}.png")
+    plt.savefig(f"position_plot_dt_{dt}.png", dpi=300)
 
     # Momentum plot
     plt.figure(figsize=(10, 4))
@@ -117,7 +141,7 @@ def plot_results(timesteps, x1_list, x2_list, momentum_list, rmsd_list, x1_analy
     plt.legend()
     plt.xlim(0, timesteps * dt)
     plt.tight_layout()
-    plt.savefig(f"momentum_plot_dt_{dt}.png")
+    plt.savefig(f"momentum_plot_dt_{dt}.png", dpi=300)
 
     # RMSD plot
     plt.figure(figsize=(10, 4))
@@ -128,7 +152,7 @@ def plot_results(timesteps, x1_list, x2_list, momentum_list, rmsd_list, x1_analy
     plt.legend()
     plt.xlim(0, timesteps * dt)
     plt.tight_layout()
-    plt.savefig(f"rmsd_plot_dt_{dt}.png")
+    plt.savefig(f"rmsd_plot_dt_{dt}.png", dpi=300)
 
 def save_xyz(filename, x1_list, x2_list):
     """
@@ -146,63 +170,61 @@ def save_xyz(filename, x1_list, x2_list):
             f.write(f"P1 {x1_list[i]:.6f} 0.000000 0.000000\n")  # Particle 1
             f.write(f"P2 {x2_list[i]:.6f} 0.000000 0.000000\n")  # Particle 2
 
-import time  # Add this import for timing the simulation
-
 if __name__ == "__main__":
     # _____________________________variables________________________________________________
-    analysis_time = 30       # Total simulation time
+    # Read in the user's input: total simulation time and time step length (Δt)
+    analysis_time, dt = parse_arguments()
+   
+    # Fixed variables, not asked from the user   
     mass = 1                 # Particle mass
     spring_constant = 1      # Spring constant
     x_equilibrium = 1        # Equilibrium position
 
-    # Test different timesteps
-    dt_values = [0.0001,0.001, 0.01, 0.1, 1]
-    rmsd_values = []
-    time_values = []
-
+    # rmsd_values = []        # necessary when plotting mean RMSD vs Δt
+    # comp_time_values = []   # necessary when plotting computational time vs Δt
+    dt_values = [dt]
     for dt in dt_values:
         timesteps = int(analysis_time / dt)
-        x1, x2 = 0, 0  # Initial positions
-        v1 = np.random.uniform(-1, 1)  
-        v2 = -v1  # Opposite velocities to conserve momentum initially
+        x1, x2 = 0, 0                           # Initial positions
+        v1, v2 = np.random.uniform(-1, 1, 2)    # Initial velocities
 
-        print(f"Running simulation with dt = {dt}...")
-        start_time = time.time()  # Start timing
+        print(f"Running simulation with dt = {dt}")
+        # start_time = time.time()  # Start timing, decomment when performing analysis part
         x1_list, x2_list, momentum_list, rmsd_list, x1_analytic_list, x2_analytic_list = leapfrog(
             timesteps, dt, mass, spring_constant, x_equilibrium, x1, x2, v1, v2
         )
-        end_time = time.time()  # End timing
+        # end_time = time.time()  # End timing, decomment when performing analysis part
 
-        # Store RMSD and computational time
-        rmsd_values.append(np.mean(rmsd_list))
-        time_values.append(end_time - start_time)
+        # Store RMSD and computational time, when doing analysis part
+        # rmsd_values.append(np.mean(rmsd_list))
+        # comp_time_values.append(end_time - start_time)
 
         print(f"Initial momentum: {momentum_list[0]:.3f}")
         print(f"Final momentum: {momentum_list[-1]:.3f}")
-        print(f"Momentum change: {momentum_list[-1] - momentum_list[0]:.3e}")  # Should be close to zero
+        print(f"Momentum change: {momentum_list[-1] - momentum_list[0]:.3e}")
 
         # Plot results
         plot_results(timesteps, x1_list, x2_list, momentum_list, rmsd_list, x1_analytic_list, x2_analytic_list, dt)
         save_xyz(f"trajectory_dt_{dt}.xyz", x1_list, x2_list)
 
-    # _____________________________analysis________________________________________________
+    # ___________analysis of computational time vs. Δt and mean RMSD vs. Δt____________________________
 
     # Plot RMSD vs. Timestep
-    plt.figure(figsize=(8, 5))
-    plt.plot(dt_values, rmsd_values, marker='o', linestyle='-', color='blue')
-    plt.xlabel("Timestep (Δt)")
-    plt.ylabel("RMSD")
-    plt.title("RMSD vs. Timestep")
-    plt.grid(True)
-    plt.savefig("rmsd_vs_timestep.png")
+    # plt.figure(figsize=(8, 5))
+    # plt.plot(dt_values, rmsd_values, marker='o', linestyle='-', color='blue')
+    # plt.xlabel("Timestep (Δt)")
+    # plt.ylabel("Mean RMSD")
+    # plt.title("Mean RMSD vs. Timestep")
+    # plt.grid(True)
+    # plt.savefig("rmsd_vs_timestep.png")
     # plt.show()
 
     # Plot Computational Time vs. Timestep
-    plt.figure(figsize=(8, 5))
-    plt.plot(dt_values, time_values, marker='o', linestyle='-', color='red')
-    plt.xlabel("Timestep (Δt)")
-    plt.ylabel("Computational Time (s)")
-    plt.title("Computational Time vs. Timestep")
-    plt.grid(True)
-    plt.savefig("time_vs_timestep.png")
+    # plt.figure(figsize=(8, 5))
+    # plt.plot(dt_values, comp_time_values, marker='o', linestyle='-', color='red')
+    # plt.xlabel("Timestep (Δt)")
+    # plt.ylabel("Computational Time (s)")
+    # plt.title("Computational Time vs. Timestep")
+    # plt.grid(True)
+    # plt.savefig("time_vs_timestep.png")
     # plt.show()
