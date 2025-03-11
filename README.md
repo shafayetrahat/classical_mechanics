@@ -27,8 +27,19 @@ Example: python harmonic_oscillator_2D.py --time 30 --dt 0.01
 
 lennard_jones.py
 python lennard_jones.py -h 
-usage: lennard_jones.py [-h] [--steps STEPS] [--density DENSITY] 
-[--file_pbc FILE_PBC] [--file_no_pbc FILE_NO_PBC] [--dt DT] [--N N]
+usage: lennard_jones.py [-h] [--steps STEPS] [--density DENSITY] [--file_pbc FILE_PBC] [--file_no_pbc FILE_NO_PBC] [--dt DT] [--N N]
+
+Lennard-Jones simulation
+
+options:
+  -h, --help            show this help message and exit
+  --steps STEPS         Number of simulation steps
+  --density DENSITY     Density of particles
+  --file_pbc FILE_PBC   PBC Output filename
+  --file_no_pbc FILE_NO_PBC
+                        No PBC Output filename
+  --dt DT               Timestep
+  --N N                 Number of particles
 
 OR with default parameters
 python lennard_jones.py 
