@@ -1,5 +1,5 @@
-# Classical Mechanics 
-## Project for KEM382
+# Classical mechanics and numerical analysis 
+## KEM 381 – project assignment 2
 
 ### Files
 harmonic_oscillator_1D.py - simulates two-particle harmonic oscillation in 1D
