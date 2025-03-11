@@ -33,3 +33,15 @@ usage: lennard_jones.py [-h] [--steps STEPS] [--density DENSITY]
 OR with default parameters
 python lennard_jones.py 
 ```
+## Simulation Videos:
+### 1D harmonic oscillator
+
+[1D harmonic oscillator simulation Video](https://github.com/shafayetrahat/classical_mechanics/blob/main/videos/1D_harmonic_oscillator.mp4)
+
+### 2D harmonic oscillator
+
+[2D harmonic oscillator simulation Video](https://github.com/shafayetrahat/classical_mechanics/blob/main/videos/2D_harmonic_oscillator.mp4)
+
+### Lennard Jones simulation
+
+[Lennard Jones simulation Video](https://github.com/shafayetrahat/classical_mechanics/blob/main/videos/lj_sim.mp4)
