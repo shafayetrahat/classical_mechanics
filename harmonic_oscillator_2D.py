@@ -10,7 +10,7 @@ def parse_arguments():
     """Read in and validate the user input from the command line"""
     parser = argparse.ArgumentParser(
         description="Leap-frog simulation of two partiles harmonically oscillating in 2D.",
-        usage="python %(prog)s <simulation_time> <time_step (dt)>")
+        usage="python %(prog)s --time <simulation_time> --dt <time_step (dt)>")
     parser.add_argument("--time", type=float, required=True, help="Total simulation time (must be > 0)")
     parser.add_argument("--dt", type=float, required=True, help="Time step length (must be > 0")
     args = parser.parse_args()
@@ -169,14 +169,15 @@ def plot_results(timesteps, x1_list, x2_list, y1_list, y2_list, lin_momentum_lis
     plt.figure(figsize=(8, 4))
     kin_energy_array = np.array(kin_energy_list)
     pot_energy_array = np.array(pot_energy_list)
-    plt.plot(range(timesteps), kin_energy_array, label="Kinetic energy", color="red")
-    plt.plot(range(timesteps), pot_energy_array, label="Potential energy", color="blue")
-    plt.xlabel("Timestep")
+    time = np.linspace(0, float(dt) * timesteps, timesteps)
+    plt.plot(time, kin_energy_array, label="Kinetic energy", color="red")
+    plt.plot(time, pot_energy_array, label="Potential energy", color="blue")
+    plt.xlabel("Time")
     plt.ylabel("Energy")
     plt.title("Kinetic and potential energy")
     plt.legend()
     plt.grid()
-    plt.xlim(0, timesteps)
+    plt.xlim(0, max(time))
     plt.savefig("kin&pot_energy_2D.png")
 
 def save_xyz(filename, x1_list, x2_list, y1_list, y2_list):
