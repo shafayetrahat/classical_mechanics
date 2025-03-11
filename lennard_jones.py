@@ -1,6 +1,9 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import os
+import argparse
+
+
 
 # Lennard-Jones potential and force
 def lj_potential(r, sigma=1.0, epsilon=1.0, rcutoff=2.5):
@@ -154,27 +157,40 @@ def simulate(N=20, density=0.8, dt=0.001, steps=5000, use_pbc=True, desired_temp
         
         # Save an image of the particle positions at specific steps
         if use_pbc != True:
-            if step % 50 == 0:  # Save every 50 steps
-                image_path = os.path.join(image_dir, f"step_{step+1}_no_pbc.png")
-                plot_positions(positions, L, step+1, use_pbc, image_path)
+            if step <100:
+                if step % 2 == 0:  # Save every 2 steps
+                    image_path = os.path.join(image_dir, f"step_{step+1}_no_pbc.png")
+                    plot_positions(positions, L, step+1, use_pbc, image_path)
+            else:
+                if step % 100 == 0:
+                    image_path = os.path.join(image_dir, f"step_{step+1}_no_pbc.png")
+                    plot_positions(positions, L, step+1, use_pbc, image_path)
     print(f"Trajectory saved to {filename}")
     return total_energies, time_steps
 
 # Run the simulation with and without PBC
 if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description="Lennard-Jones simulation")
+    parser.add_argument("--steps", type=int, default=5000, help="Number of simulation steps")
+    parser.add_argument("--density", type=float, default=0.0006, help="Density of particles")
+    parser.add_argument("--file_pbc", type=str, default="lj_trajectory_pbc.xyz", help="PBC Output filename")
+    parser.add_argument("--file_no_pbc", type=str, default="lj_trajectory_no_pbc.xyz", help="No PBC Output filename")
+    parser.add_argument("--dt", type=float, default=0.002, help="Timestep")
+    parser.add_argument("--N", type=int, default=20, help="Number of particles")
+    args = parser.parse_args()
     print("Simulating without PBCs...")
-    total_energies_no_pbc, time_steps_no_pbc = simulate(N=20, dt=0.0005, steps=5000, use_pbc=False, filename="lj_trajectory_no_pbc.xyz")
-    plt.plot(time_steps_no_pbc, total_energies_no_pbc, label="Total Energy (No PBC)")
-    plt.xlabel("Time")
-    plt.ylabel("Energy")
-    plt.title("Energy Conservation (No PBC)")
-    plt.legend()
-    plt.savefig("energy_no_pbc.png")
-    plt.clf()
+    # total_energies_no_pbc, time_steps_no_pbc = simulate(N=args.N, dt=args.dt, steps=args.steps, use_pbc=False, filename=args.file_no_pbc)
+    # plt.plot(time_steps_no_pbc, total_energies_no_pbc, label="Total Energy (No PBC)")
+    # plt.xlabel("Time")
+    # plt.ylabel("Energy")
+    # plt.title("Energy Conservation (No PBC)")
+    # plt.legend()
+    # plt.savefig("energy_no_pbc.png")
+    # plt.clf()
 
     print("Simulating with PBCs...")
 
-    total_energies_pbc, time_steps_pbc = simulate(N=20, density=0.0006 , dt=0.002, steps=5000, use_pbc=True, filename=f"lj_trajectory_pbc.xyz")
+    total_energies_pbc, time_steps_pbc = simulate(N=args.N, density=args.density , dt=args.dt, steps=args.steps, use_pbc=True, filename=args.file_pbc)
     plt.plot(time_steps_pbc, total_energies_pbc, label="Total Energy (PBC)")
     plt.xlabel("Time")
     plt.ylabel("Energy")
