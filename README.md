@@ -5,10 +5,10 @@
 harmonic_oscillator_1D.py - simulates two-particle harmonic oscillation in 1D
 harmonic_oscillator_2D.py - simulates two-particle harmonic oscillation in 2D
 lennard_jones.py - simulates interactions between particles using the Lennard-Jones potential with and without PBCs
-requiremets.txt - a list of packages and libraries needed to run the programs
+requirements.txt - a list of packages and libraries needed to run the programs
 
 
-### Installing extensions
+### Installing Requirements
 In virtual environment, the necessary requirements can be installed with the command
 ```
 pip3 install -r requirements.txt
