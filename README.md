@@ -35,13 +35,18 @@ python lennard_jones.py
 ```
 ## Simulation Videos:
 ### 1D harmonic oscillator
-
-[1D harmonic oscillator simulation Video](https://github.com/shafayetrahat/classical_mechanics/blob/main/videos/1D_harmonic_oscillator.mp4)
+https://github.com/user-attachments/assets/bc0cfda3-b037-4b17-a27e-17aded27f450
 
 ### 2D harmonic oscillator
 
-[2D harmonic oscillator simulation Video](https://github.com/shafayetrahat/classical_mechanics/blob/main/videos/2D_harmonic_oscillator.mp4)
+
+https://github.com/user-attachments/assets/67ffa22d-381a-4554-a3c2-fa7d5e880a76
+
+
 
 ### Lennard Jones simulation
 
-[Lennard Jones simulation Video](https://github.com/shafayetrahat/classical_mechanics/blob/main/videos/lj_sim.mp4)
+
+https://github.com/user-attachments/assets/c451f896-390e-42df-8533-bac3e9de6347
+
+
