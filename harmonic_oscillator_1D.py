@@ -8,7 +8,7 @@ def parse_arguments():
     """Read in and validate the user input from the command line"""
     parser = argparse.ArgumentParser(
         description="Leap-frog simulation of two partiles harmonically oscillating.",
-        usage="python %(prog)s <simulation_time> <time_step (dt)>")
+        usage="python %(prog)s --time <simulation_time> --dt <time_step (dt)>")
     parser.add_argument("--time", type=float, required=True, help="Total simulation time (must be > 0)")
     parser.add_argument("--dt", type=float, required=True, help="Time step length (must be > 0")
     args = parser.parse_args()
